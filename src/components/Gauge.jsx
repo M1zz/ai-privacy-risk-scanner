@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { RISK_COLORS, getRiskLevel, getRiskLabel } from '../data/riskColors';
+import { useTheme } from '../data/theme';
 
 export default function Gauge({ score }) {
+  const t = useTheme();
   const r = 80, sw = 10, circ = Math.PI * r;
   const [animated, setAnimated] = useState(0);
 
   useEffect(() => {
-    const t = setTimeout(() => setAnimated(score), 100);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setAnimated(score), 100);
+    return () => clearTimeout(timer);
   }, [score]);
 
   const level = getRiskLevel(score);
@@ -18,7 +20,7 @@ export default function Gauge({ score }) {
     <svg width={r * 2 + sw} height={r + sw + 24} viewBox={`0 0 ${r * 2 + sw} ${r + sw + 24}`}>
       <path
         d={`M ${sw / 2} ${r + sw / 2} A ${r} ${r} 0 0 1 ${r * 2 + sw / 2} ${r + sw / 2}`}
-        fill="none" stroke="#0a0d1a" strokeWidth={sw} strokeLinecap="round"
+        fill="none" stroke={t.gaugeTrack} strokeWidth={sw} strokeLinecap="round"
       />
       <path
         d={`M ${sw / 2} ${r + sw / 2} A ${r} ${r} 0 0 1 ${r * 2 + sw / 2} ${r + sw / 2}`}

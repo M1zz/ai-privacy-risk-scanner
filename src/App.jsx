@@ -1,17 +1,41 @@
 import { useState, useEffect } from 'react';
 import CASES from './data/cases';
 import { RISK_COLORS, getRiskLevel, getRiskLabel } from './data/riskColors';
+import { THEMES, ThemeContext } from './data/theme';
 import Prompt from './components/Prompt';
 import Gauge from './components/Gauge';
 import Typing from './components/Typing';
 import DetectedItem from './components/DetectedItem';
 
-function ListPage({ onPick }) {
+function ThemeToggle({ dark, onToggle }) {
+  const t = dark ? THEMES.dark : THEMES.light;
+  return (
+    <button
+      onClick={onToggle}
+      style={{
+        position: "fixed", top: 18, right: 18, zIndex: 100,
+        width: 40, height: 40, borderRadius: 12,
+        background: t.surface, border: `1px solid ${t.border}`,
+        cursor: "pointer", fontSize: "1.1rem",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        transition: "all .2s ease",
+        boxShadow: dark ? "none" : "0 1px 4px rgba(0,0,0,.06)",
+      }}
+      onMouseEnter={(e) => { e.currentTarget.style.borderColor = t.borderHover; }}
+      onMouseLeave={(e) => { e.currentTarget.style.borderColor = t.border; }}
+      aria-label={dark ? "라이트 모드로 전환" : "다크 모드로 전환"}
+    >
+      {dark ? "☀️" : "🌙"}
+    </button>
+  );
+}
+
+function ListPageInner({ onPick, theme: t }) {
   return (
     <div style={{
       minHeight: "100vh",
-      background: "#04050a",
-      color: "#e8eaf0",
+      background: t.bg,
+      color: t.text,
       fontFamily: "'Noto Sans KR', -apple-system, sans-serif",
     }}>
       <div style={{ maxWidth: 560, margin: "0 auto", padding: "56px 20px 100px" }}>
@@ -45,25 +69,25 @@ function ListPage({ onPick }) {
                 onClick={() => onPick(i)}
                 style={{
                   padding: "16px 20px",
-                  border: "1px solid #0e1225",
+                  border: `1px solid ${t.border}`,
                   borderRadius: 12,
                   cursor: "pointer",
                   transition: "all .2s ease",
                   animation: `slideUp .4s ease ${i * 0.04}s both`,
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "#1a2040";
-                  e.currentTarget.style.background = "#080a14";
+                  e.currentTarget.style.borderColor = t.borderHover;
+                  e.currentTarget.style.background = t.surface;
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "#0e1225";
+                  e.currentTarget.style.borderColor = t.border;
                   e.currentTarget.style.background = "transparent";
                 }}
               >
                 <span style={{
                   fontSize: "clamp(.84rem, 2.5vw, .95rem)",
                   fontWeight: 500,
-                  color: "#5a6488",
+                  color: t.textSecondary,
                   lineHeight: 1.7,
                 }}>
                   {promptLine}
@@ -78,7 +102,7 @@ function ListPage({ onPick }) {
   );
 }
 
-function DetailPage({ caseIndex, onBack }) {
+function DetailPageInner({ caseIndex, onBack, theme: t }) {
   const [showResult, setShowResult] = useState(false);
   const [scanning, setScanning] = useState(true);
 
@@ -97,8 +121,8 @@ function DetailPage({ caseIndex, onBack }) {
   return (
     <div style={{
       minHeight: "100vh",
-      background: "#04050a",
-      color: "#e8eaf0",
+      background: t.bg,
+      color: t.text,
       fontFamily: "'Noto Sans KR', -apple-system, sans-serif",
     }}>
       <div style={{ maxWidth: 640, margin: "0 auto", padding: "24px 16px 100px" }}>
@@ -109,12 +133,12 @@ function DetailPage({ caseIndex, onBack }) {
           style={{
             display: "flex", alignItems: "center", gap: 6,
             background: "none", border: "none", cursor: "pointer",
-            color: "#4a5580", fontSize: ".85rem", fontWeight: 600,
+            color: t.textMuted, fontSize: ".85rem", fontWeight: 600,
             padding: "8px 0", marginBottom: 24,
             transition: "color .2s",
           }}
-          onMouseEnter={(e) => { e.currentTarget.style.color = "#e8eaf0"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.color = "#4a5580"; }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = t.text; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = t.textMuted; }}
         >
           ‹ 목록으로
         </button>
@@ -123,14 +147,14 @@ function DetailPage({ caseIndex, onBack }) {
         <div style={{
           display: "flex", alignItems: "center", gap: 12,
           marginBottom: 24, padding: "16px 20px",
-          background: "#080a14", border: "1px solid #0c1020", borderRadius: 14,
+          background: t.surface, border: `1px solid ${t.border}`, borderRadius: 14,
         }}>
           <span style={{ fontSize: "1.3rem" }}>{currentCase.emoji}</span>
           <div style={{ flex: 1 }}>
             <div style={{ fontWeight: 700, fontSize: ".92rem", lineHeight: 1.35 }}>
               {currentCase.label}
             </div>
-            <div style={{ fontSize: ".68rem", color: "#3a4868", marginTop: 2 }}>
+            <div style={{ fontSize: ".68rem", color: t.textMuted, marginTop: 2 }}>
               {currentCase.category}
             </div>
           </div>
@@ -156,7 +180,7 @@ function DetailPage({ caseIndex, onBack }) {
             }}>
               ● 전체 프롬프트 원문
               <span style={{
-                marginLeft: 12, color: "#3a4060",
+                marginLeft: 12, color: t.textMuted,
                 fontWeight: 400, letterSpacing: 0, textTransform: "none",
               }}>
                 빨간줄 = 치명적 · 주황줄 = 위험
@@ -169,7 +193,7 @@ function DetailPage({ caseIndex, onBack }) {
         {/* Scanning Animation */}
         {scanning && (
           <div style={{
-            background: "#060810", border: "1px solid #0a0d1a", borderRadius: 18,
+            background: t.scanBg, border: `1px solid ${t.scanBorder}`, borderRadius: 18,
             padding: "56px 24px", textAlign: "center",
             position: "relative", overflow: "hidden",
           }}>
@@ -185,7 +209,7 @@ function DetailPage({ caseIndex, onBack }) {
               fontSize: 26, animation: "pulse 1.2s infinite",
             }}>🔍</div>
             <div style={{ fontWeight: 700, marginBottom: 6 }}>개인정보 스캔 중...</div>
-            <div style={{ fontSize: ".78rem", color: "#2a3558" }}>위험 패턴을 탐지하고 있습니다</div>
+            <div style={{ fontSize: ".78rem", color: t.scanText }}>위험 패턴을 탐지하고 있습니다</div>
           </div>
         )}
 
@@ -195,7 +219,7 @@ function DetailPage({ caseIndex, onBack }) {
 
             {/* Score */}
             <div style={{
-              background: "#060810", border: "1px solid #0a0d1a", borderRadius: 20,
+              background: t.surfaceAlt, border: `1px solid ${t.border}`, borderRadius: 20,
               padding: "36px 24px 28px", textAlign: "center",
               position: "relative", overflow: "hidden",
             }}>
@@ -205,7 +229,7 @@ function DetailPage({ caseIndex, onBack }) {
               }} />
               <div style={{
                 fontSize: ".68rem", fontWeight: 600, letterSpacing: ".12em",
-                color: "#2a3558", textTransform: "uppercase", marginBottom: 16,
+                color: t.textMuted, textTransform: "uppercase", marginBottom: 16,
               }}>
                 종합 위험도
               </div>
@@ -246,7 +270,7 @@ function DetailPage({ caseIndex, onBack }) {
 
             {/* Data Flow Risks */}
             <div style={{
-              background: "#060810", border: "1px solid #0a0d1a",
+              background: t.surfaceAlt, border: `1px solid ${t.border}`,
               borderRadius: 16, padding: 24,
             }}>
               <div style={{
@@ -267,7 +291,7 @@ function DetailPage({ caseIndex, onBack }) {
                   }}>
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <span style={{ fontSize: ".84rem", color: "#7a82a8", lineHeight: 1.8 }}>{risk}</span>
+                  <span style={{ fontSize: ".84rem", color: t.textSecondary, lineHeight: 1.8 }}>{risk}</span>
                 </div>
               ))}
             </div>
@@ -292,7 +316,7 @@ function DetailPage({ caseIndex, onBack }) {
                     display: "flex", alignItems: "center", justifyContent: "center",
                     fontSize: ".65rem", color: "#30d158", fontWeight: 700,
                   }}>✓</span>
-                  <span style={{ fontSize: ".84rem", color: "#a8b0d0", lineHeight: 1.8 }}>{rec}</span>
+                  <span style={{ fontSize: ".84rem", color: t.textSecondary, lineHeight: 1.8 }}>{rec}</span>
                 </div>
               ))}
             </div>
@@ -302,18 +326,18 @@ function DetailPage({ caseIndex, onBack }) {
               onClick={onBack}
               style={{
                 width: "100%", padding: "16px",
-                background: "#080a14", border: "1px solid #0c1020",
+                background: t.surface, border: `1px solid ${t.border}`,
                 borderRadius: 14, cursor: "pointer",
-                color: "#4a5580", fontSize: ".88rem", fontWeight: 600,
+                color: t.textMuted, fontSize: ".88rem", fontWeight: 600,
                 transition: "all .2s",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "#1a2040";
-                e.currentTarget.style.color = "#e8eaf0";
+                e.currentTarget.style.borderColor = t.borderHover;
+                e.currentTarget.style.color = t.text;
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "#0c1020";
-                e.currentTarget.style.color = "#4a5580";
+                e.currentTarget.style.borderColor = t.border;
+                e.currentTarget.style.color = t.textMuted;
               }}
             >
               ‹ 다른 케이스 보기
@@ -321,7 +345,7 @@ function DetailPage({ caseIndex, onBack }) {
 
             <div style={{
               textAlign: "center", padding: "8px 16px",
-              fontSize: ".68rem", color: "#181c34", lineHeight: 1.7,
+              fontSize: ".68rem", color: t.textMuted, lineHeight: 1.7,
             }}>
               ※ 모든 이름·번호·주소는 가상 데이터입니다. 개인정보 보호 인식 제고를 위한 시뮬레이션.
             </div>
@@ -334,6 +358,9 @@ function DetailPage({ caseIndex, onBack }) {
 
 export default function App() {
   const [selected, setSelected] = useState(null);
+  const [dark, setDark] = useState(false);
+
+  const theme = dark ? THEMES.dark : THEMES.light;
 
   const handlePick = (index) => {
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -345,9 +372,13 @@ export default function App() {
     setSelected(null);
   };
 
-  if (selected !== null) {
-    return <DetailPage key={selected} caseIndex={selected} onBack={handleBack} />;
-  }
-
-  return <ListPage onPick={handlePick} />;
+  return (
+    <ThemeContext.Provider value={theme}>
+      <ThemeToggle dark={dark} onToggle={() => setDark(!dark)} />
+      {selected !== null
+        ? <DetailPageInner key={selected} caseIndex={selected} onBack={handleBack} theme={theme} />
+        : <ListPageInner onPick={handlePick} theme={theme} />
+      }
+    </ThemeContext.Provider>
+  );
 }

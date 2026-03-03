@@ -1,8 +1,11 @@
-const CASES = [
+import { calcRiskScore } from './scoring';
+
+const RAW_CASES = [
   {
     label: "고객 문의 메일 → 자동 답장",
     category: "이메일",
     emoji: "📧",
+    individuals: 1,
     preview: `고객 메일에 답장 초안 써줘.
 
 보낸사람: 박지현 <jihyun.park@daum.net>
@@ -29,7 +32,6 @@ const CASES = [
 
 정중하고 공감하는 톤으로 작성해줘. 환불 절차 3~5영업일 안내 포함.`,
     result: {
-      overall_score: 74,
       summary: "고객의 카드번호·연락처·주소가 필터 없이 AI 서버로 전송되는 구조",
       detected_items: [
         { type: "카드번호 (부분)", icon: "💳", level: "critical", description: "5412-83**-****-7291 — 앞 8자리+뒤 4자리 노출. 다른 유출 데이터와 결합 시 카드 특정 가능." },
@@ -54,6 +56,7 @@ const CASES = [
     label: "회의 녹취록 → 요약 자동 생성",
     category: "회의록",
     emoji: "🎙️",
+    individuals: 5,
     preview: `이번 회의 녹취록 요약해줘.
 
 [제품팀 주간회의 / 2025.02.24]
@@ -76,7 +79,6 @@ const CASES = [
 
 핵심만 간결하게 정리해줘.`,
     result: {
-      overall_score: 86,
       summary: "매출 기밀·인사 정보·NDA 계약 조건이 동시에 외부 AI로 전송",
       detected_items: [
         { type: "NDA 대외비 정보", icon: "🔒", level: "critical", description: "네이버클라우드 계약금 5억·3년 독점 — '대외비'로 명시된 정보가 AI 서버로 전송. 영업비밀 유출." },
@@ -101,6 +103,7 @@ const CASES = [
     label: "엑셀 고객 명단 → 프로모션 메일 발송",
     category: "마케팅",
     emoji: "📊",
+    individuals: 5,
     preview: `이 고객 명단으로 프로모션 안내 메일 작성해줘.
 
 이름,이메일,전화번호,최근구매,등급
@@ -120,7 +123,6 @@ const CASES = [
 
 VVIP는 20% 할인, VIP는 10% 할인, 일반은 신규 쿠폰 안내. 자연스러운 톤으로.`,
     result: {
-      overall_score: 72,
       summary: "고객 5명의 실명·연락처·소비 패턴이 한 번에 외부 AI 서버로 전송",
       detected_items: [
         { type: "고객 실명 5건", icon: "👤", level: "high", description: "김민수, 이서연 등 실명이 외부 API에 그대로 전달. 서버 로그에 남아 스팸·피싱 타겟으로 악용." },
@@ -145,6 +147,7 @@ VVIP는 20% 할인, VIP는 10% 할인, 일반은 신규 쿠폰 안내. 자연스
     label: "팀원 인사평가 → 코멘트 자동 생성",
     category: "인사·평가",
     emoji: "📝",
+    individuals: 3,
     preview: `팀원 3명 상반기 인사평가 코멘트 작성해줘.
 
 1. 김도연 (대리, 3년차) — 목표 달성률 112%
@@ -174,7 +177,6 @@ VVIP는 20% 할인, VIP는 10% 할인, 일반은 신규 쿠폰 안내. 자연스
 
 각각 강점, 개선점, 종합 의견으로 나눠서 써줘.`,
     result: {
-      overall_score: 91,
       summary: "직원 연봉·건강정보·이직 활동 등 극도로 민감한 인사 정보가 외부 AI에 노출",
       detected_items: [
         { type: "직원 연봉·성과급", icon: "💰", level: "critical", description: "연봉 4,800만원, 성과급 450만원 — 보수 정보는 가장 민감한 인사 데이터. 동료 간 형평성 갈등, 외부 유출 시 스카우트 타겟." },
@@ -199,6 +201,7 @@ VVIP는 20% 할인, VIP는 10% 할인, 일반은 신규 쿠폰 안내. 자연스
     label: "Slack 메시지 → 일일 업무 요약",
     category: "사내 메신저",
     emoji: "💬",
+    individuals: 4,
     preview: `#general 채널 메시지로 일일 요약 만들어줘.
 
 박서준: AWS 빌링 $4,200 넘었음
@@ -219,7 +222,6 @@ VVIP는 20% 할인, VIP는 10% 할인, 일반은 신규 쿠폰 안내. 자연스
 
 핵심 업무, 주의사항, 팀원 근태 정리해줘.`,
     result: {
-      overall_score: 82,
       summary: "직원 건강정보·NDA 기밀·이직정보가 무차별 수집되어 AI에 전달",
       detected_items: [
         { type: "직원 건강 정보", icon: "🩺", level: "critical", description: "허리 디스크·MRI — 민감정보로 동의 없이 수집 시 법 위반. 인사 차별 근거로 악용 가능." },
@@ -244,6 +246,7 @@ VVIP는 20% 할인, VIP는 10% 할인, 일반은 신규 쿠폰 안내. 자연스
     label: "지원자 이력서 → AI 스크리닝",
     category: "HR·채용",
     emoji: "👔",
+    individuals: 1,
     preview: `지원자 이력서 분석해서 역량 점수 매겨줘.
 
 성명: 한소희
@@ -270,7 +273,6 @@ VVIP는 20% 할인, VIP는 10% 할인, 일반은 신규 쿠폰 안내. 자연스
 
 합격 기준: 기술 역량 7점 이상, 경력 3년 이상`,
     result: {
-      overall_score: 85,
       summary: "생년월일·자택 주소 등 민감 정보가 AI에 직접 노출되는 매우 위험한 구조",
       detected_items: [
         { type: "생년월일", icon: "🎂", level: "critical", description: "1995년 3월 12일 — 주민번호 앞 6자리와 동일. 명의도용·금융사기 핵심 재료이며 변경 불가능." },
@@ -292,6 +294,7 @@ VVIP는 20% 할인, VIP는 10% 할인, 일반은 신규 쿠폰 안내. 자연스
     label: "주간 보고서 → AI 자동 작성",
     category: "보고서",
     emoji: "📋",
+    individuals: 4,
     preview: `이번 주 업무 내용으로 주간 보고서 써줘.
 
 [프로젝트 현황]
@@ -321,7 +324,6 @@ VVIP는 20% 할인, VIP는 10% 할인, 일반은 신규 쿠폰 안내. 자연스
 
 항목별로 현황-리스크-조치계획 형태로 정리해줘.`,
     result: {
-      overall_score: 88,
       summary: "클라이언트 정보·내부 감사·재무 기밀이 외부 AI 서버에 동시 노출",
       detected_items: [
         { type: "클라이언트 기밀", icon: "🏢", level: "critical", description: "삼성전자 납품가 12억·미수금 4.2억·SLA 위반 — 거래 조건과 분쟁 가능성이 외부 유출. 소송 리스크." },
@@ -346,6 +348,7 @@ VVIP는 20% 할인, VIP는 10% 할인, 일반은 신규 쿠폰 안내. 자연스
     label: "계약서 검토 → AI 리스크 분석",
     category: "법무·계약",
     emoji: "📄",
+    individuals: 2,
     preview: `이 업무위탁 계약서 검토해서 위험 조항 찾아줘.
 
 [갑] (주)우리회사 / 대표 정민호
@@ -383,7 +386,6 @@ VVIP는 20% 할인, VIP는 10% 할인, 일반은 신규 쿠폰 안내. 자연스
 
 위험 조항, 누락된 보호 장치, 수정 제안을 정리해줘.`,
     result: {
-      overall_score: 90,
       summary: "법인 계좌번호·사업자번호·계약 금액 등 핵심 사업 기밀이 외부 AI에 전송",
       detected_items: [
         { type: "법인 계좌번호", icon: "🏦", level: "critical", description: "하나은행 267-910045-12307 — 법인 계좌가 유출되면 사기 입금 요청, 보이스피싱에 직접 악용." },
@@ -408,6 +410,7 @@ VVIP는 20% 할인, VIP는 10% 할인, 일반은 신규 쿠폰 안내. 자연스
     label: "고객 VOC → 분석 리포트",
     category: "CS·고객관리",
     emoji: "🎧",
+    individuals: 4,
     preview: `이번 달 고객 VOC 정리해서 분석 리포트 만들어줘.
 
 #VOC-0219 김서영 (010-5541-8823)
@@ -438,7 +441,6 @@ VVIP는 20% 할인, VIP는 10% 할인, 일반은 신규 쿠폰 안내. 자연스
 
 유형별 빈도, 심각도, 개선 제안을 포함해서 정리해줘.`,
     result: {
-      overall_score: 84,
       summary: "고객 3명의 연락처·카드번호·미성년 자녀 건강정보가 한꺼번에 외부 전송",
       detected_items: [
         { type: "미성년자 건강 정보", icon: "🧒", level: "critical", description: "이민준(8세) 알레르기 반응 — 미성년자 의료정보는 최고 수준 보호 대상. 부모 동의 없는 외부 전송은 위법." },
@@ -460,5 +462,14 @@ VVIP는 20% 할인, VIP는 10% 할인, 일반은 신규 쿠폰 안내. 자연스
     },
   },
 ];
+
+// 각 케이스의 overall_score를 프레임워크 기반으로 자동 산출
+const CASES = RAW_CASES.map(c => ({
+  ...c,
+  result: {
+    ...c.result,
+    overall_score: calcRiskScore(c.result.detected_items, c.individuals),
+  },
+}));
 
 export default CASES;

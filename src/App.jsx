@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import CASES from './data/cases';
 import { RISK_COLORS, getRiskLevel, getRiskLabel } from './data/riskColors';
 import { THEMES, ThemeContext } from './data/theme';
+import { getScoreBreakdown, FRAMEWORK_REFS } from './data/scoring';
 import Prompt from './components/Prompt';
 import Gauge from './components/Gauge';
 import Typing from './components/Typing';
@@ -246,6 +247,58 @@ function DetailPageInner({ caseIndex, onBack, theme: t }) {
                 <Typing text={result.summary} speed={18} />
               </div>
             </div>
+
+            {/* Score Breakdown */}
+            {(() => {
+              const bd = getScoreBreakdown(result.detected_items, currentCase.individuals);
+              return (
+                <div style={{
+                  background: t.surfaceAlt, border: `1px solid ${t.border}`,
+                  borderRadius: 14, padding: "18px 20px",
+                  fontSize: ".75rem", color: t.textSecondary, lineHeight: 1.9,
+                }}>
+                  <div style={{
+                    fontSize: ".65rem", fontWeight: 700, letterSpacing: ".08em",
+                    color: t.textMuted, textTransform: "uppercase", marginBottom: 12,
+                  }}>
+                    점수 산출 근거
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                      <span>외부 AI 전송 기본 위험도 <span style={{ color: t.textMuted }}>(ISO 27701)</span></span>
+                      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 600 }}>+{bd.transmission}</span>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                      <span>항목별 민감도 합산 <span style={{ color: t.textMuted }}>(NIST SP 800-122 · PIPA)</span></span>
+                      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 600 }}>+{bd.sensitivity}</span>
+                    </div>
+                    {bd.volume > 0 && (
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <span>데이터 주체 {currentCase.individuals}명 <span style={{ color: t.textMuted }}>(NIST 수량 가중)</span></span>
+                        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 600 }}>+{bd.volume}</span>
+                      </div>
+                    )}
+                    {bd.combo > 0 && (
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <span>치명적 항목 결합 가중 <span style={{ color: t.textMuted }}>(NIST 결합 위험)</span></span>
+                        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 600 }}>+{bd.combo}</span>
+                      </div>
+                    )}
+                    <div style={{
+                      display: "flex", justifyContent: "space-between",
+                      borderTop: `1px solid ${t.border}`, paddingTop: 6, marginTop: 4,
+                      fontWeight: 700, color: t.text,
+                    }}>
+                      <span>종합 점수</span>
+                      <span style={{ fontFamily: "'JetBrains Mono', monospace" }}>{bd.total}</span>
+                    </div>
+                  </div>
+                  <div style={{ marginTop: 12, fontSize: ".62rem", color: t.textMuted, lineHeight: 1.7 }}>
+                    {FRAMEWORK_REFS.join(" · ")}
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Detected Items */}
             <div>

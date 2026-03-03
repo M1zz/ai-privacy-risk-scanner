@@ -18,22 +18,22 @@ function ListPage({ onPick }) {
 
         <div style={{ textAlign: "center", marginBottom: 44 }}>
           <h1 style={{
-            fontSize: "clamp(1.5rem, 5vw, 2.2rem)",
+            fontSize: "clamp(1.2rem, 4vw, 1.7rem)",
             fontWeight: 900,
-            lineHeight: 1.3,
-            letterSpacing: "-.03em",
+            lineHeight: 1.4,
+            letterSpacing: "-.02em",
           }}>
-            이런 프롬프트,<br />
+            아래 고객 데이터를 기반으로 각 고객에게<br />
             <span style={{
               background: "linear-gradient(135deg, #ff2d55, #ff6b35)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
             }}>
-              보내고 있지 않나요?
+              맞춤형 마케팅 SMS 문구를 작성해줘.
             </span>
           </h1>
           <p style={{ marginTop: 14, fontSize: ".85rem", color: "#3a4868", lineHeight: 1.7 }}>
-            케이스를 선택해서 개인정보 위험을 진단해보세요
+            고객 DB → 마케팅 문구 자동 생성
           </p>
         </div>
 

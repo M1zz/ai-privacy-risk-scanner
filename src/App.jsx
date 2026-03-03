@@ -48,7 +48,7 @@ function ListPageInner({ onPick, theme: t }) {
             lineHeight: 1.45,
             letterSpacing: "-.02em",
           }}>
-            이 프롬프트,<br />
+            이런 프롬프트,<br />
             <span style={{
               background: "linear-gradient(135deg, #ff2d55, #ff6b35)",
               WebkitBackgroundClip: "text",

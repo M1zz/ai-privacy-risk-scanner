@@ -37,84 +37,18 @@ function ListPage({ onPick }) {
           </p>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {CASES.map((c, i) => {
-            const riskLevel = getRiskLevel(c.result.overall_score);
-            const colors = RISK_COLORS[riskLevel];
-            return (
-              <div
-                key={i}
-                onClick={() => onPick(i)}
-                style={{
-                  cursor: "pointer",
-                  background: "#080a14",
-                  border: "1px solid #0c1020",
-                  borderRadius: 16,
-                  overflow: "hidden",
-                  transition: "all .2s",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "#0a0d1c";
-                  e.currentTarget.style.borderColor = colors.border + "44";
-                  e.currentTarget.style.transform = "translateY(-2px)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "#080a14";
-                  e.currentTarget.style.borderColor = "#0c1020";
-                  e.currentTarget.style.transform = "none";
-                }}
-              >
-                {/* Card Header */}
-                <div style={{
-                  display: "flex", alignItems: "center", gap: 14,
-                  padding: "16px 18px",
-                }}>
-                  <div style={{
-                    width: 42, height: 42, borderRadius: 12, flexShrink: 0,
-                    background: colors.glow,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: "1.35rem",
-                  }}>
-                    {c.emoji}
-                  </div>
-
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontWeight: 700, fontSize: ".9rem", lineHeight: 1.35 }}>
-                      {c.label}
-                    </div>
-                    <div style={{ fontSize: ".7rem", color: "#3a4868", marginTop: 2 }}>
-                      {c.category}
-                    </div>
-                  </div>
-
-                  <div style={{ flexShrink: 0, textAlign: "right" }}>
-                    <div style={{
-                      fontFamily: "'JetBrains Mono', monospace",
-                      fontSize: "1.2rem", fontWeight: 800,
-                      color: colors.text,
-                      textShadow: `0 0 16px ${colors.glow}`,
-                      lineHeight: 1,
-                    }}>
-                      {c.result.overall_score}
-                    </div>
-                    <div style={{
-                      fontSize: ".56rem", fontWeight: 700, marginTop: 4,
-                      color: colors.text, opacity: 0.7,
-                    }}>
-                      {getRiskLabel(c.result.overall_score)}
-                    </div>
-                  </div>
-
-                  <div style={{ color: "#2a3558", fontSize: ".9rem", flexShrink: 0 }}>›</div>
-                </div>
-
-                {/* Prompt Preview */}
-                <div style={{ padding: "0 18px 16px", pointerEvents: "none" }}>
-                  <Prompt text={c.preview} fade={true} big={false} />
-                </div>
-              </div>
-            );
-          })}
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          {CASES.map((c, i) => (
+            <div
+              key={i}
+              onClick={() => onPick(i)}
+              style={{ cursor: "pointer", transition: "all .2s" }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = "none"; }}
+            >
+              <Prompt text={c.preview} fade={true} big={true} />
+            </div>
+          ))}
         </div>
 
         <div style={{

@@ -13,12 +13,30 @@ function ListPage({ onPick }) {
       background: "#04050a",
       color: "#e8eaf0",
       fontFamily: "'Noto Sans KR', -apple-system, sans-serif",
-      display: "flex", alignItems: "center", justifyContent: "center",
     }}>
-      <div style={{ maxWidth: 560, width: "100%", padding: "48px 20px" }}>
+      <div style={{ maxWidth: 560, margin: "0 auto", padding: "56px 20px 100px" }}>
 
-        {/* Prompt List */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+        {/* Title */}
+        <div style={{ marginBottom: 44 }}>
+          <h1 style={{
+            fontSize: "clamp(1.3rem, 5vw, 1.8rem)",
+            fontWeight: 900,
+            lineHeight: 1.45,
+            letterSpacing: "-.02em",
+          }}>
+            이 프롬프트,<br />
+            <span style={{
+              background: "linear-gradient(135deg, #ff2d55, #ff6b35)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}>
+              혹시 보낸 적 있나요?
+            </span>
+          </h1>
+        </div>
+
+        {/* Prompt Card List */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {CASES.map((c, i) => {
             const promptLine = c.prompt.split("\n")[0];
             return (
@@ -26,29 +44,29 @@ function ListPage({ onPick }) {
                 key={i}
                 onClick={() => onPick(i)}
                 style={{
-                  padding: "18px 0",
-                  borderBottom: i < CASES.length - 1 ? "1px solid #0a0e1a" : "none",
+                  padding: "16px 20px",
+                  border: "1px solid #0e1225",
+                  borderRadius: 12,
                   cursor: "pointer",
                   transition: "all .2s ease",
-                  animation: `slideUp .4s ease ${i * 0.05}s both`,
+                  animation: `slideUp .4s ease ${i * 0.04}s both`,
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.paddingLeft = "12px";
-                  e.currentTarget.style.color = "#fff";
+                  e.currentTarget.style.borderColor = "#1a2040";
+                  e.currentTarget.style.background = "#080a14";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.paddingLeft = "0";
-                  e.currentTarget.style.color = "";
+                  e.currentTarget.style.borderColor = "#0e1225";
+                  e.currentTarget.style.background = "transparent";
                 }}
               >
                 <span style={{
-                  fontSize: "clamp(.88rem, 2.5vw, 1.05rem)",
+                  fontSize: "clamp(.84rem, 2.5vw, .95rem)",
                   fontWeight: 500,
                   color: "#5a6488",
                   lineHeight: 1.7,
-                  transition: "color .2s ease",
                 }}>
-                  "{promptLine}"
+                  {promptLine}
                 </span>
               </div>
             );

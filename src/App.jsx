@@ -16,43 +16,104 @@ function ListPage({ onPick }) {
     }}>
       <div style={{ maxWidth: 640, margin: "0 auto", padding: "48px 16px 100px" }}>
 
-        <div style={{ textAlign: "center", marginBottom: 44 }}>
+        {/* Header */}
+        <div style={{ marginBottom: 48 }}>
+          <p style={{
+            fontSize: ".78rem", fontWeight: 700, letterSpacing: ".12em",
+            color: "#ff2d55", textTransform: "uppercase", marginBottom: 16,
+          }}>
+            AI Privacy Risk Scanner
+          </p>
           <h1 style={{
-            fontSize: "clamp(1.2rem, 4vw, 1.7rem)",
+            fontSize: "clamp(1.3rem, 5vw, 1.9rem)",
             fontWeight: 900,
-            lineHeight: 1.4,
+            lineHeight: 1.45,
             letterSpacing: "-.02em",
           }}>
-            아래 고객 데이터를 기반으로 각 고객에게<br />
+            이 프롬프트들,<br />
             <span style={{
               background: "linear-gradient(135deg, #ff2d55, #ff6b35)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
             }}>
-              맞춤형 마케팅 SMS 문구를 작성해줘.
+              혹시 써본 적 있나요?
             </span>
           </h1>
-          <p style={{ marginTop: 14, fontSize: ".85rem", color: "#3a4868", lineHeight: 1.7 }}>
-            고객 DB → 마케팅 문구 자동 생성
+          <p style={{
+            marginTop: 16, fontSize: ".88rem", color: "#3a4868",
+            lineHeight: 1.8, maxWidth: 440,
+          }}>
+            업무 자동화를 위해 흔히 쓰는 프롬프트들입니다.<br />
+            탭해서 어떤 개인정보가 새어나가는지 확인해 보세요.
           </p>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-          {CASES.map((c, i) => (
-            <div
-              key={i}
-              onClick={() => onPick(i)}
-              style={{ cursor: "pointer", transition: "all .2s" }}
-              onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.transform = "none"; }}
-            >
-              <Prompt text={c.preview} fade={true} big={true} />
-            </div>
-          ))}
+        {/* Prompt List */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          {CASES.map((c, i) => {
+            const riskLevel = getRiskLevel(c.result.overall_score);
+            return (
+              <div
+                key={i}
+                onClick={() => onPick(i)}
+                style={{
+                  cursor: "pointer",
+                  transition: "all .25s ease",
+                  animation: `slideUp .45s ease ${i * 0.06}s both`,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-3px)";
+                  e.currentTarget.querySelector('[data-cta]').style.opacity = "1";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "none";
+                  e.currentTarget.querySelector('[data-cta]').style.opacity = "0";
+                }}
+              >
+                {/* Category + Score */}
+                <div style={{
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                  marginBottom: 8, padding: "0 4px",
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <span style={{ fontSize: "1rem" }}>{c.emoji}</span>
+                    <span style={{
+                      fontSize: ".72rem", fontWeight: 600, color: "#4a5580",
+                    }}>
+                      {c.category}
+                    </span>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <span
+                      data-cta
+                      style={{
+                        fontSize: ".7rem", color: "#4a5580",
+                        opacity: 0, transition: "opacity .2s",
+                      }}
+                    >
+                      위험도 분석 보기 →
+                    </span>
+                    <span style={{
+                      fontSize: ".68rem", fontWeight: 700, padding: "2px 8px",
+                      borderRadius: 6,
+                      background: RISK_COLORS[riskLevel].glow,
+                      color: RISK_COLORS[riskLevel].text,
+                    }}>
+                      {c.result.overall_score}점
+                    </span>
+                  </div>
+                </div>
+
+                {/* Prompt Preview */}
+                <Prompt text={c.preview} fade={true} big={true} />
+              </div>
+            );
+          })}
         </div>
 
+        {/* Footer */}
         <div style={{
-          textAlign: "center", marginTop: 40,
+          textAlign: "center", marginTop: 48,
           fontSize: ".68rem", color: "#181c34", lineHeight: 1.7,
         }}>
           ※ 모든 이름·번호·주소는 가상 데이터입니다. 개인정보 보호 인식 제고를 위한 시뮬레이션.

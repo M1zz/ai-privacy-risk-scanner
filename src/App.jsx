@@ -7,6 +7,8 @@ import Prompt from './components/Prompt';
 import Gauge from './components/Gauge';
 import Typing from './components/Typing';
 import DetectedItem from './components/DetectedItem';
+import SponsorSection from './components/SponsorSection';
+import GiscusComments from './components/GiscusComments';
 
 function ThemeToggle({ dark, onToggle }) {
   const t = dark ? THEMES.dark : THEMES.light;
@@ -98,12 +100,17 @@ function ListPageInner({ onPick, theme: t }) {
           })}
         </div>
 
+        {/* Sponsor */}
+        <div style={{ marginTop: 32 }}>
+          <SponsorSection compact />
+        </div>
+
       </div>
     </div>
   );
 }
 
-function DetailPageInner({ caseIndex, onBack, theme: t }) {
+function DetailPageInner({ caseIndex, onBack, theme: t, dark }) {
   const [showResult, setShowResult] = useState(false);
   const [scanning, setScanning] = useState(true);
 
@@ -374,6 +381,12 @@ function DetailPageInner({ caseIndex, onBack, theme: t }) {
               ))}
             </div>
 
+            {/* Sponsor */}
+            <SponsorSection />
+
+            {/* Comments */}
+            <GiscusComments term={currentCase.slug} dark={dark} />
+
             {/* Back to List */}
             <button
               onClick={onBack}
@@ -429,7 +442,7 @@ export default function App() {
     <ThemeContext.Provider value={theme}>
       <ThemeToggle dark={dark} onToggle={() => setDark(!dark)} />
       {selected !== null
-        ? <DetailPageInner key={selected} caseIndex={selected} onBack={handleBack} theme={theme} />
+        ? <DetailPageInner key={selected} caseIndex={selected} onBack={handleBack} theme={theme} dark={dark} />
         : <ListPageInner onPick={handlePick} theme={theme} />
       }
     </ThemeContext.Provider>

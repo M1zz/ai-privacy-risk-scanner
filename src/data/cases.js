@@ -2,6 +2,7 @@ import { calcRiskScore } from './scoring';
 
 const RAW_CASES = [
   {
+    slug: "customer-email-auto-reply",
     label: "고객 문의 메일 → 자동 답장",
     category: "이메일",
     emoji: "📧",
@@ -53,6 +54,7 @@ const RAW_CASES = [
     },
   },
   {
+    slug: "meeting-transcript-summary",
     label: "회의 녹취록 → 요약 자동 생성",
     category: "회의록",
     emoji: "🎙️",
@@ -100,6 +102,7 @@ const RAW_CASES = [
     },
   },
   {
+    slug: "excel-customer-promo-mail",
     label: "엑셀 고객 명단 → 프로모션 메일 발송",
     category: "마케팅",
     emoji: "📊",
@@ -144,6 +147,7 @@ VVIP는 20% 할인, VIP는 10% 할인, 일반은 신규 쿠폰 안내. 자연스
     },
   },
   {
+    slug: "hr-review-comment-gen",
     label: "팀원 인사평가 → 코멘트 자동 생성",
     category: "인사·평가",
     emoji: "📝",
@@ -198,6 +202,7 @@ VVIP는 20% 할인, VIP는 10% 할인, 일반은 신규 쿠폰 안내. 자연스
     },
   },
   {
+    slug: "slack-daily-summary",
     label: "Slack 메시지 → 일일 업무 요약",
     category: "사내 메신저",
     emoji: "💬",
@@ -243,6 +248,7 @@ VVIP는 20% 할인, VIP는 10% 할인, 일반은 신규 쿠폰 안내. 자연스
     },
   },
   {
+    slug: "resume-ai-screening",
     label: "지원자 이력서 → AI 스크리닝",
     category: "HR·채용",
     emoji: "👔",
@@ -291,6 +297,7 @@ VVIP는 20% 할인, VIP는 10% 할인, 일반은 신규 쿠폰 안내. 자연스
     },
   },
   {
+    slug: "weekly-report-auto-gen",
     label: "주간 보고서 → AI 자동 작성",
     category: "보고서",
     emoji: "📋",
@@ -345,6 +352,7 @@ VVIP는 20% 할인, VIP는 10% 할인, 일반은 신규 쿠폰 안내. 자연스
     },
   },
   {
+    slug: "contract-review-risk",
     label: "계약서 검토 → AI 리스크 분석",
     category: "법무·계약",
     emoji: "📄",
@@ -407,6 +415,7 @@ VVIP는 20% 할인, VIP는 10% 할인, 일반은 신규 쿠폰 안내. 자연스
     },
   },
   {
+    slug: "voc-analysis-report",
     label: "고객 VOC → 분석 리포트",
     category: "CS·고객관리",
     emoji: "🎧",

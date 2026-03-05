@@ -381,9 +381,6 @@ function DetailPageInner({ caseIndex, onBack, theme: t, dark }) {
               ))}
             </div>
 
-            {/* Sponsor */}
-            <SponsorSection />
-
             {/* Comments */}
             <GiscusComments term={currentCase.slug} dark={dark} />
 
@@ -418,6 +415,7 @@ function DetailPageInner({ caseIndex, onBack, theme: t, dark }) {
           </div>
         )}
       </div>
+      <SponsorSection floating />
     </div>
   );
 }
